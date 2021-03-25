@@ -1,0 +1,46 @@
+﻿@page "/addEmployee"
+@inject EmployeeWeb.Data.IEmployeeService EmployeesService
+@inject NavigationManager NavigationManager
+
+    <h3>AddEmployee</h3>
+
+    <EditForm Model="@newEmployeeItem" OnValidSubmit="@AddNewEmployeeAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+
+        <div cass="form-group">
+            User Id: <br />
+            <InputNumber  @bind-Value="newEmployeeItem.EmployeeId" />
+        </div>
+        <div cass="form-group">
+            First Name: <br />
+            <InputText class="form-control" rows="4" @bind-Value="newEmployeeItem.Name" />
+        </div>
+
+
+        <div cass="form-group">
+            Hourly Wage: <br />
+            <InputNumber rows="4" @bind-Value="newEmployeeItem.HourlyWage" />
+        </div>
+        <div cass="form-group">
+            Hours per month: <br />
+            <InputNumber rows="4" @bind-Value="newEmployeeItem.HoursPerMonth" />
+        </div>
+
+        <p class="actions">
+            <button class="btn btn-outline-dark" type="submit"> Create </button>
+        </p>
+    </EditForm>
+
+    @code {
+        private EmployeeWeb.Model.Employee newEmployeeItem = new Model.Employee();
+        private void AddNewEmployeeAsync()
+        {
+            EmployeesService.AddEmployeeAsync(newEmployeeItem);
+            NavigationManager.NavigateTo("/employees");
+        }
+        
+    }
+
+

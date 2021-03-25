@@ -1,0 +1,110 @@
+﻿@page "/employees"
+@inject EmployeeWeb.Data.IEmployeeService EmployeesService
+@using Model
+<h3>Employees</h3>
+
+<p>
+    Filter by Employee Id: <input type="number" @oninput="@((arg) => FilterByEmployeeId(arg))" style="width:50px" />
+</p>
+@*<p>
+    Filter by overtime status:
+    <select class="form-control selectpicker" @onchange="@((arg) => FilterByOvertimeStatus(arg))" style="width:100px">
+        <option> Both</option>
+        <option> False</option>
+        <option> True</option>
+    </select>
+</p>*@
+
+
+@if (employeesToShow == null)
+{
+    <p>
+        <em> Loading...</em>
+    </p>
+}
+else if (!employeesToShow.Any())
+{
+    <p>
+        <em> No employee items exist. Please add some. </em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Employee ID</th>
+                <th>  Name</th>
+                <th> Hourly wage</th>
+                <th> Hours per month</th>
+                <th> Overtime?</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in employeesToShow)
+            {
+                <tr>
+
+                    <td> @item.EmployeeId</td>
+                    <td> @item.Name</td>
+                    <td> @item.HourlyWage </td>
+                    <td> @item.HoursPerMonth </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IList<EmployeeWeb.Model.Employee> employeesToShow;
+    private IList<EmployeeWeb.Model.Employee> allEmployees;
+    //private bool? filterByOvertime;
+    private int? filterById;
+
+    //private void FilterByOvertimeStatus(ChangeEventArgs args)
+    //{
+    //    filterByOvertime = null;
+    //    try
+    //    {
+    //        filterByOvertime = bool.Parse(args.Value.ToString());
+    //    }
+    //    catch(Exception e)
+    //    {
+
+    //    }
+    //    ExecuteFilter();
+    //}
+    private void FilterByEmployeeId(ChangeEventArgs changeEventArgs)
+    {
+        filterById = null;
+        try
+        {
+            filterById = int.Parse(changeEventArgs.Value.ToString());
+        }
+        catch(Exception e) { }
+        ExecuteFilter();
+    }
+
+
+
+    private void ExecuteFilter()
+    {
+        employeesToShow = allEmployees.Where(t =>
+       //(filterByOvertime != null && t.HasOvertime == filterByOvertime || filterByOvertime == null) &&
+       (filterById != null && t.EmployeeId == filterById || filterById==null)) .ToList();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        allEmployees = await EmployeesService.GetEmployeesAsync();
+        employeesToShow = allEmployees;
+    }
+
+
+
+}
+
+
